@@ -6,7 +6,7 @@ on:
       - master
       - develop
   pull_request:
-    branches:
+    branches:       
       - master
       - develop
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest   # Sistema operativo
 
     env:
-      NODE_ENV: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' ? 'production' : 'staging' }}
+      NODE_ENV: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' ? 'production' : 'staging' }}
       API_KEY: ${{ secrets.API_KEY }}         # Clave API (secreto)
       DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }} # Token de despliegue (secreto)
 
