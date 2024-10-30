@@ -1,0 +1,19 @@
+# Nombre del flujo de trabajo
+name: appMovil CI/CD Workflow
+
+# Configuración de desencadenadores
+on:
+  # Ejecutar el flujo en 'push' a ramas específicas, como 'main' y 'develop'
+  push:
+    branches:
+      - main
+      - develop
+
+  # Ejecutar el flujo cuando se crea un 'pull request'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+  # Permitir activación manual desde la interfaz de GitHub Actions
+  workflow_dispatch:
