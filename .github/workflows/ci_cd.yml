@@ -3,28 +3,36 @@ name: appMovil CI/CD Workflow
 on:
   push:
     branches:
-      - main
+      - master
       - develop
   pull_request:
     branches:
-      - main
+      - master
       - develop
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest   # Sistema operativo
+
+    env:
+      NODE_ENV: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' ? 'production' : 'staging' }}
+      API_KEY: ${{ secrets.API_KEY }}         # Clave API (secreto)
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }} # Token de despliegue (secreto)
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2           # Instalación de Node.js
         with:
-          flutter-version: 'stable'
+          node-version: '16'
 
-      - name: Flutter Pub Get
-        run: flutter pub get
-
-      - name: Run Tests
-        run: flutter test
+      - name: Cache node modules
+        uses: actions/cache@v2                # Caché de dependencias
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
