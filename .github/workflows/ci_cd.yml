@@ -1,38 +1,55 @@
-name: appMovil CI/CD Workflow
+name: PWA CI/CD Workflow
 
 on:
   push:
     branches:
       - master
-      - develop
+      - develop  
   pull_request:
-    branches:       
+    branches:
       - master
-      - develop
-  workflow_dispatch:
+      - develop  
+  workflow_dispatch:  # Permite la activación manual del flujo de trabajo
 
 jobs:
   build:
-    runs-on: ubuntu-latest   # Sistema operativo
-
-    env:
-      NODE_ENV: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' ? 'production' : 'staging' }}
-      API_KEY: ${{ secrets.API_KEY }}         # Clave API (secreto)
-      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }} # Token de despliegue (secreto)
+    runs-on: ubuntu-latest  # Define el sistema operativo correcto
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v2           # Instalación de Node.js
+        uses: actions/setup-node@v2
         with:
-          node-version: '16'
+          node-version: '16'  
 
-      - name: Cache node modules
-        uses: actions/cache@v2                # Caché de dependencias
+      - name: Cache Node.js modules
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm install  # O usa 'yarn install' si prefieres Yarn
+
+      - name: Set up environment variables
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+          echo "DEPLOY_TOKEN=${{ secrets.DEPLOY_TOKEN }}" >> $GITHUB_ENV
+          # Agrega más variables de entorno según sea necesario
+
+      - name: Run tests
+        run: npm test  
+
+      - name: Build the project
+        run: npm run build  
+
+      
+      - name: Deploy to Production
+        if: github.ref == 'refs/heads/master'  
+        run: |
+          # Comando para desplegar tu aplicación, por ejemplo:
+          npm run deploy
