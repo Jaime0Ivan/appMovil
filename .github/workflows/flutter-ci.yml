@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - master
-      - development # Especifica las ramas en las que deseas ejecutar el flujo de trabajo
+      - development 
   pull_request:
     branches:
-      - master # Valida cambios en solicitudes de extracción a la rama principal
-  workflow_dispatch: # Permite la activación manual del flujo de trabajo
+      - master
+      - development  
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -45,6 +46,13 @@ jobs:
 
       - name: Build application
         run: flutter build apk # O el comando que necesites para construir tu aplicación
+
+      - name: Upload build artifact # Mueve esta sección fuera de `env` y dentro de `steps`
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
 
     env:
       # Configuración de variables de entorno y secretos
