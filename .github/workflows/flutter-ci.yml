@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - master
-      - development 
+      - development # Especifica las ramas en las que deseas ejecutar el flujo de trabajo
   pull_request:
     branches:
-      - master 
+      - master # Valida cambios en solicitudes de extracción a la rama principal
   workflow_dispatch: # Permite la activación manual del flujo de trabajo
 
 jobs:
@@ -21,7 +21,15 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.4' # Cambia esto a la versión de Flutter que estés utilizando
+          flutter-version: '3.24.4' 
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.pub-cache # Ruta del caché de dependencias de Flutter
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('**/pubspec.yaml') }} # Clave única para el caché
+          restore-keys: |
+            ${{ runner.os }}-pub-cache-
 
       - name: Install dependencies
         run: flutter pub get
@@ -36,7 +44,3 @@ jobs:
       # Configuración de variables de entorno y secretos
       FLUTTER_CHANNEL: stable # Ejemplo de variable de entorno
       SECRET_KEY: ${{ secrets.SECRET_KEY }} # Asegúrate de configurar esto en los secretos del repositorio
-
-    cache:
-      paths:
-        - ~/.pub-cache # Optimiza el caché de dependencias para acelerar las compilaciones
