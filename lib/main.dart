@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Hola Mundo',
-      home: const CounterPage(), // Cambiamos a CounterPage para manejar el contador
+      home: const CounterPage(), // Aquí llamamos al widget del contador
     );
   }
 }
@@ -48,7 +48,7 @@ class _CounterPageState extends State<CounterPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _incrementCounter, // Incrementar el contador al presionar
+              onPressed: _incrementCounter, // Al presionar, incrementamos el contador
               child: const Text('Incrementar'),
             ),
           ],
