@@ -33,7 +33,7 @@ jobs:
       - name: Cache Flutter dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.pub-cache
+          path: ~/.pub-cache 
           key: ${{ runner.os }}-pub-cache-${{ hashFiles('**/pubspec.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pub-cache-
@@ -41,8 +41,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Run tests
-        run: flutter test
+      # Etapa de Pruebas Unitarias
+      - name: Run unit tests
+        run: flutter test test/unit_tests/
+
+      # Etapa de Pruebas de Integración
+      - name: Run integration tests
+        run: flutter test integration_test/
 
       - name: Build application
         run: flutter build apk
@@ -53,33 +58,6 @@ jobs:
         with:
           name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18' # Versión necesaria para Jest y Cypress/Puppeteer
-
-      - name: Install Jest and run unit tests
-        run: |
-          npm install
-          npm run test -- --coverage # Ejecuta Jest y genera reporte de cobertura
-        env:
-          CI: true
-
-      - name: Store Jest coverage report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: jest-coverage-report
-          path: coverage/ # Subir reporte de cobertura de Jest
-
-      # Configuración opcional para Cypress o Puppeteer (pruebas E2E)
-      - name: Run Cypress tests
-        run: |
-          npm install cypress
-          npx cypress run
-        env:
-          CI: true
 
     env:
       FLUTTER_CHANNEL: stable
