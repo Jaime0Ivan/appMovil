@@ -1,0 +1,42 @@
+name: appMovil CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - master
+      - development 
+  pull_request:
+    branches:
+      - master 
+  workflow_dispatch: # Permite la activación manual del flujo de trabajo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest # Define el sistema operativo según las necesidades de tu proyecto
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.4' # Cambia esto a la versión de Flutter que estés utilizando
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build application
+        run: flutter build apk # O el comando que necesites para construir tu aplicación
+
+    env:
+      # Configuración de variables de entorno y secretos
+      FLUTTER_CHANNEL: stable # Ejemplo de variable de entorno
+      SECRET_KEY: ${{ secrets.SECRET_KEY }} # Asegúrate de configurar esto en los secretos del repositorio
+
+    cache:
+      paths:
+        - ~/.pub-cache # Optimiza el caché de dependencias para acelerar las compilaciones
